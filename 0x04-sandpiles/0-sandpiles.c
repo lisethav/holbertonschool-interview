@@ -7,7 +7,7 @@
  *
  * @grid: 3 x3 matrix of integers to print
  */
-static void my_print_grid(int grid[3][3])
+static void print_grid(int grid[3][3])
 {
 	int i, j;
 
@@ -97,7 +97,7 @@ void sandpiles_sum(int grid1[3][3], int grid2[3][3])
 			printf("=\n");
 			print_grid(grid1);
 
-			topple_sandpiles(grid1, t_points);
+			topple_grid(grid1, t_points);
 		}
 
 	} while (!stable);
