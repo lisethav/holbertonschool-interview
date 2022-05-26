@@ -1,7 +1,7 @@
 #include "lists.h"
 
 /**
- * is_palindrome -  function that checks if a singly linked list is a palindrome
+ * is_palindrome - function that checks if a singly linked list is a palindrome
  * @head: palindrome head
  * Return: 0 if it is not a palindrome, 1 if it is a palindrome
  */
