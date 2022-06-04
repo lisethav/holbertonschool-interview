@@ -44,4 +44,3 @@ if __name__ == '__main__':
         """ user """
         print_result(statusCodes, fileSize)
         raise
-
