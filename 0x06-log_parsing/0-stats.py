@@ -2,45 +2,42 @@
 """ script that reads stdin line by line and computes metrics """
 import sys
 
-if __name__ == '__main__':
+count = 0
+all_file_size = 0
+all_status = {}
 
-    def print_result(statusCodes, fileSize):
-        """ stadistics """
-        print("File size: {:d}".format(fileSize))
-        for statusCode, times in sorted(statusCodes.items()):
-            if times:
-                print("{:s}: {:d}".format(statusCode, times))
+for line in sys.stdin:
 
-    statusCodes = {"200": 0,
-                   "301": 0,
-                   "400": 0,
-                   "401": 0,
-                   "403": 0,
-                   "404": 0,
-                   "405": 0,
-                   "500": 0
-                   }
-    fileSize = 0
-    n_lines = 0
+    """breaking up the input to check format"""
 
-    try:
-        """ read stdin """
-        for line in sys.stdin:
-            if n_lines != 0 and n_lines % 10 == 0:
-                """ After every 10 lines, print from the beginning """
-                print_result(statusCodes, fileSize)
-            n_lines += 1
-            data = line.split()
-            try:
-                """ calculate results """
-                statusCode = data[-2]
-                if statusCode in statusCodes:
-                    statusCodes[statusCode] += 1
-                fileSize += int(data[-1])
-            except:
-                pass
-        print_result(statusCodes, fileSize)
-    except KeyboardInterrupt:
-        """ user """
-        print_result(statusCodes, fileSize)
-        raise
+    details = line.split(" ", 2)
+    more_details = details[2].split("]", 1)
+    details.insert(2, more_details[0])
+    more_details = more_details[1].split('"', 2)
+    details.insert(3, more_details[1])
+    more_details = more_details[2].split(" ", 2)
+    details.insert(4, more_details[1])
+    more_details = more_details[2].split("\n")
+    details[-1] = more_details[0]
+
+    """ check if the input is correct """ 
+    if len(details) == 6:
+        posible_status = [200, 301, 400, 401, 403, 404, 405, 500]
+        file_size = int(details[-1])
+        all_file_size += file_size
+        status = int(details[-2])
+        if (status in posible_status):
+            if (status in all_status.keys()):
+                all_status[status] += 1
+            else:
+                all_status[status] = 1
+
+        count += 1
+        if (count == 10):
+            print("File size: {:d}".format(all_file_size))
+            status_items = all_status.items()
+            sorted_status = sorted(status_items)
+            for item in sorted_status:
+                print("{}: {}".format(item[0], item[1]))
+            count = 0
+
