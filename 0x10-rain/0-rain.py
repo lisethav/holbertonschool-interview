@@ -1,20 +1,26 @@
 #!/usr/bin/python3
-""" Module for peak list rainfall problem """
+"""
+Rain
+"""
 
 
 def rain(walls):
-    """ Calculates how much water retained """
-
-    if not walls or len(walls) <= 2:
+    """calculate how much water will be
+       retained after it rains
+    """
+    if len(walls) == 0:
         return 0
 
-    list_len = len(walls)
-    total = 0
-    for idx, elem in enumerate(walls):
-        next = idx + 1
-        if elem <= next:
-            if next == 0:
-                total += 1
-            else:
-                total += elem
-    return 
+    max_water = 0
+
+    for n in range(len(walls)):
+        max_left = walls[n]
+        for num in range(n):
+            max_left = max(max_left, walls[num])
+        max_right = walls[n]
+        for num in range(n + 1, len(walls)):
+            max_right = max(max_right, walls[num])
+
+        max_water = max_water + (min(max_left, max_right) - walls[n])
+
+    return max_water
