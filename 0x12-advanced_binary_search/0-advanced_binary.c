@@ -1,81 +1,54 @@
 #include "search_algos.h"
-
 /**
- *  recursive_bsearch - helper function using recursion
+ * search: busca recursivamente un valor dado en una matriz
+ * @array: puntero al primer elemento de la búsqueda de matriz en
+ * @value: el valor a buscar
+ * @l: índice más a la izquierda utilizado como límite
+ * @r: índice más a la derecha utilizado como límite
  *
- * @array: ptr to array
- * @size: number of elements in array
- * @value: value at index
- * @index: index of mid prior to recursive call
- *
- * Return: first index where value is, otherwise -1 if no value or array NULL
+ * return: El índice donde se ubicó el valor para el primer
+ * tiempo, o -1
  */
-
-int recursive_bsearch(int *array, size_t size, int value, unsigned int index)
+int search(int *array, int l, int r, int value)
 {
-	unsigned int lo = 0;
-	unsigned int hi = size - 1;
-	unsigned int mid;
+	int i, korn;
 
-	if (size == 0)
-		return (-1);
+	korn = l + (r - l) / 2;
+	if (l == r)
+	{
+		if (value < array[l] || value > array[r])
+		{
+			printf("Searching in array: %d\n", array[korn]);
+			return (-1);
+		}
+		return (l);
+	}
+	printf("Searching in array:");
+	for (i = l; i <= r; i++)
+	{
+		if (i != r)
+			printf(" %d,", array[i]);
+		else
+			printf(" %d\n", array[i]);
+	}
 
-	printf("Searching in array: ");
-	print_array(array, size);
-
-	if (lo > hi)
-		return (-1);
-	if (size % 2 == 0)
-		mid = (size / 2) - 1;
+	if (array[korn] < value)
+		return (search(array, korn + 1, r, value));
 	else
-		mid = size / 2;
-	if (array[mid] == value)
-		return (mid + index);
-	else if (array[mid] > value)
-		return (recursive_bsearch(array, mid, value, index));
-	else if (array[mid] < value)
-		return (recursive_bsearch(array + mid + 1, size - mid - 1,
-					  value, index + mid + 1));
-	return (-2);
+		return (search(array, l, korn, value));
 }
 
 /**
- *  advanced_binary - searches for value in array ints with Binary search algo
+ * advanced_binary: busca un valor en una matriz ordenada de enteros.
+ * @array: apunta al primer elemento de la matriz para buscar en
+ * @size: número de elementos en la matriz
+ * @value: el valor a buscar
  *
- * @array: ptr to array
- * @size: number of elements in array
- * @value: value at index
- *
- * Return: first index where value is, otherwise -1 if no value or array NULL
- */
-
+ * Retorno: El índice donde se ubicó el valor por primera vez, o -1
+*/
 int advanced_binary(int *array, size_t size, int value)
 {
-	unsigned int index = 0;
-
 	if (!array)
 		return (-1);
-
-	return (recursive_bsearch(array, size, value, index));
-}
-
-/**
- * print_array - Prints an array of integers
- *
- * @array: The array to be printed
- * @size: Number of elements in @array
- */
-void print_array(int *array, size_t size)
-{
-	size_t i;
-
-	i = 0;
-	while (array && i < size)
-	{
-		if (i > 0)
-			printf(", ");
-		printf("%d", array[i]);
-		++i;
-	}
-	printf("\n");
+	return (search(array, 0, size - 1, value));
 }
