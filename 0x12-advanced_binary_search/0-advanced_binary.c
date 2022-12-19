@@ -1,70 +1,81 @@
 #include "search_algos.h"
+
 /**
- * advanced_binary - searches a value in an array of integers
- * @array: pointer to the first element
+ *  recursive_bsearch - helper function using recursion
+ *
+ * @array: ptr to array
  * @size: number of elements in array
- * @value: the value to search for
- * Return: index where value is located
+ * @value: value at index
+ * @index: index of mid prior to recursive call
+ *
+ * Return: first index where value is, otherwise -1 if no value or array NULL
  */
+
+int recursive_bsearch(int *array, size_t size, int value, unsigned int index)
+{
+	unsigned int lo = 0;
+	unsigned int hi = size - 1;
+	unsigned int mid;
+
+	if (size == 0)
+		return (-1);
+
+	printf("Searching in array: ");
+	print_array(array, size);
+
+	if (lo > hi)
+		return (-1);
+	if (size % 2 == 0)
+		mid = (size / 2) - 1;
+	else
+		mid = size / 2;
+	if (array[mid] == value)
+		return (mid + index);
+	else if (array[mid] > value)
+		return (recursive_bsearch(array, mid, value, index));
+	else if (array[mid] < value)
+		return (recursive_bsearch(array + mid + 1, size - mid - 1,
+					  value, index + mid + 1));
+	return (-2);
+}
+
+/**
+ *  advanced_binary - searches for value in array ints with Binary search algo
+ *
+ * @array: ptr to array
+ * @size: number of elements in array
+ * @value: value at index
+ *
+ * Return: first index where value is, otherwise -1 if no value or array NULL
+ */
+
 int advanced_binary(int *array, size_t size, int value)
 {
-	int index = 0;
+	unsigned int index = 0;
 
-	if (array == NULL || size == 0)
+	if (!array)
 		return (-1);
 
-	index = binary_search(array, 0, size - 1, value);
-	return (index);
+	return (recursive_bsearch(array, size, value, index));
 }
 
 /**
- * binary_search - recursive search
- * @array: pointer to the first element
- * @left: first element
- * @right: last element
- * @value: the value to search for
- * Return: index
+ * print_array - Prints an array of integers
+ *
+ * @array: The array to be printed
+ * @size: Number of elements in @array
  */
-int binary_search(int *array, size_t left, size_t right, int value)
-{
-	size_t mid;
-
-	if (left > right)
-		return (-1);
-
-	mid = (left + right) / 2;
-
-	if (value == array[mid])
-	{
-		print_binary(array, left, right);
-		return (mid);
-	}
-	else if (value < array[mid])
-	{
-		print_binary(array, left, right);
-		return (binary_search(array, left, mid - 1, value));
-	}
-	else
-	{
-		print_binary(array, left, right);
-		return (binary_search(array, mid + 1, right, value));
-	}
-}
-
-/**
- * print_binary - print array searched
- * @array: pointer to the first element
- * @left: first element
- * @right: last element
- */
-void print_binary(int *array, size_t left, size_t right)
+void print_array(int *array, size_t size)
 {
 	size_t i;
 
-	printf("Searching in array: ");
-	for (i = left; i < right; i++)
+	i = 0;
+	while (array && i < size)
 	{
-		printf("%d, ", array[i]);
+		if (i > 0)
+			printf(", ");
+		printf("%d", array[i]);
+		++i;
 	}
-	printf("%d\n", array[i]);
+	printf("\n");
 }
