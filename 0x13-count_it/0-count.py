@@ -1,55 +1,48 @@
 #!/usr/bin/python3
-""" Queries Reddit API recursively for all hot post titles from subreddit
-    Returns None if invalid subreddit
-"""
-import requests as r
-import requests.auth as ra
-from sys import argv
+""" Lines of code """
+from requests import request
 
 
-def count_words(subreddit, hot_list=[], after=None):
-    """ Recursive query system for Reddit API hot posts
-    """
+def generate_dicts(word_list):
+    """ Lines of code """
+    count = {k: 0 for k in word_list}
+    dup = {}
+    for k in word_list:
+        if k not in dup:
+            dup[k] = 0
+        dup[k] += 1
+    return (count, dup)
 
-    # Generates token & bearer for requests to oauth.reddit.com endpoints
-    # https://github.com/reddit-archive/reddit/wiki/OAuth2-Quick-Start-Example
 
-    client_id = "i_m3aNLQE0vskA"
-    secret = "UykV3Qz2TGSWSWaMmSeOWgR5JT4"
-    my_username = "causticpop"
-    my_pwd = "@Holberton98"
+def count_words(subreddit, word_list, after="", count={}, dup={}, init=0):
+    """ Lines of code """
+    if not init:
+        count, dup = generate_dicts(word_list)
 
-    client_auth = ra.HTTPBasicAuth(client_id, secret)
-    post_data = {"grant_type": "password", "username":
-                 my_username, "password": my_pwd}
-    headers = {"User-Agent": "ChangeMeClient/0.1 by {}".format(my_username)}
-    response = r.post("https://www.reddit.com/api/v1/access_token",
-                      auth=client_auth, data=post_data, headers=headers)
-    token = response.json().get("access_token")
-    bearer = response.json().get("token_type")
+    url = "https://api.reddit.com/r/{}/hot?after={}".format(subreddit, after)
+    headers = {"User-Agent": "Python3"}
+    response = request("GET", url, headers=headers).json()
+    try:
+        dat = response.get('data')
+        top = dat.get('children')
+        _after = dat.get('after')
 
-    # Queries oauth.reddit.com endpoints using token & bearer
-    # Sets limit on number of items returned in params variable
+        for item in top:
+            dat = item.get('data')['title']
+            for word in count:
+                amount = dat.lower().split(' ').count(word.lower())
+                count[word] += amount
 
-    sub = subreddit
-    sub_url = "https://oauth.reddit.com/r/{}/hot".format(sub)
-
-    headers = {"Authorization": "{} {}".format(bearer, token),
-               "User-Agent": "ChangeMeClient/0.1 by {}".format(my_username)}
-    params = {'limit': 100, 'after': after}
-    response = r.get(sub_url, headers=headers, params=params)
-
-    # handles error response; invalid subreddit
-    if response.status_code is not 200:
-        return None
-
-    # peels the onion of nested dicts and lists
-    else:
-        response_json = response.json().get('data').get('children')
-        for subdict in response_json:
-            hot_list.append(subdict.get('data').get('title'))
-        if response.json().get('data').get('after') is not None:
-            after = response.json().get('data').get('after')
-            return count_words(subreddit, hot_list, after)
+        if _after:
+            count_words(subreddit, word_list, _after, count, dup, 1)
         else:
-            return hot_list
+            sort_abc = sorted(count.items(), key=lambda tup: tup[::-1])
+            desc = sorted(sort_abc, key=lambda tup: tup[1], reverse=True)
+
+            for name, cnt in desc:
+                cnt *= dup[name]
+                if cnt:
+                    print('{}: {}'.format(name.lower(), cnt))
+    except Exception:
+        return None
+        
