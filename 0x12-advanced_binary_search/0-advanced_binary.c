@@ -1,6 +1,6 @@
 #include "search_algos.h"
 /**
- * search: busca recursivamente un valor dado en una matriz
+ * search - busca recursivamente un valor dado en una matriz
  * @array: puntero al primer elemento de la búsqueda de matriz en
  * @value: el valor a buscar
  * @l: índice más a la izquierda utilizado como límite
@@ -39,7 +39,7 @@ int search(int *array, int l, int r, int value)
 }
 
 /**
- * advanced_binary: busca un valor en una matriz ordenada de enteros.
+ * advanced_binary - busca un valor en una matriz ordenada de enteros.
  * @array: apunta al primer elemento de la matriz para buscar en
  * @size: número de elementos en la matriz
  * @value: el valor a buscar
