@@ -5,7 +5,8 @@ Matrix 2D
 
 
 def rotate_2d_matrix(matrix):
-    """girar la matriz de dos dimensiones 90 grados en el sentido de las agujas del reloj
+    """girar la matriz de dos dimensiones 90 grados en el sentido de las
+    agujas del reloj
     Argumentos:
         matriz (lista[[lista]]): una matriz
     """
